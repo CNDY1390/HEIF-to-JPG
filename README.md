@@ -19,14 +19,13 @@ A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG 
 
 ## Usage
 ### Python Script
-1. Place the script, the image to be converted, and `mi_dci_p3.icc` in the same directory.
+1. Place the script and the image to be converted in the same directory.
 2. Edit the `.py` script file and enter the name of the image to be converted.
 3. Run the script.
 
 ### Packaged exe
-1. Place the program, the image to be converted, and `mi_dci_p3.icc` in the same directory.
-2. Run the program.
-3. Enter the name of the image to be converted.
+1. Run the program.
+2. Follow the instruction.
 
 > [!IMPORTANT]
 > The packaged exe version may trigger false virus alerts. Please allow it to run. If you are concerned, you can run it offline or download the source code for inspection.
