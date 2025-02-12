@@ -42,3 +42,7 @@ MIT License.
 如果有问题，请提交issue！
 
 如果有好的修改方案，请提交 Pull Request！
+
+<img src="./docs/appreciation.png" style="height:400px">
+
+> 如果可以，请在“赞助备注”中留下个人主页，谢谢支持！
