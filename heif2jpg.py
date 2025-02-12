@@ -36,7 +36,9 @@ def p3_to_srgb(rgb_data, icc_data):
 def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, quality=100):  
     register_heif_opener()
     output_path = f"{heif_path[:-5]}.jpg"
-    icc_data = Image.open(heif_path).info.get('icc_profile')
+    image_info = Image.open(heif_path).info
+    icc_data = image_info.get('icc_profile')
+    exif_data = image_info.get("exif")
     try:
         #rgb_data = np.array(open_heif(heif_path))
         rgb_data = np.array(Image.open(heif_path))
@@ -51,9 +53,9 @@ def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, quality=100):
             raise FileExistsError("Output file already exists.")
         if is_with_icc:
             #icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
-            img.save(output_path, quality=quality, icc_profile=icc_data)
+            img.save(output_path, quality=quality, icc_profile=icc_data, exif=exif_data)
         else:
-            img.save(output_path, quality=quality)
+            img.save(output_path, quality=quality, exif=exif_data)
         print(f"Conversion completed: {output_path}")
     except Exception:
         raise
@@ -61,7 +63,7 @@ def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, quality=100):
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    heif_path = "IMG_20250204_170123.HEIF"
+    heif_path = "your_heif_name.HEIF"
     is_p3_to_srgb = False
     is_with_icc = True
     quality = 100
