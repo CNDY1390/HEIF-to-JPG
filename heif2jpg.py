@@ -9,10 +9,9 @@ Git: https://github.com/CNDY1390/HEIF-to-JPG
 
 from PIL import Image, ImageCms
 import numpy as np
+from io import BytesIO
 import os
-from pillow_heif import register_heif_opener, open_heif
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-register_heif_opener()
+from pillow_heif import register_heif_opener
 
 
 def yuv_limited_to_full(rgb_data):
@@ -22,9 +21,9 @@ def yuv_limited_to_full(rgb_data):
     return np.array(rgb_data)
 
 
-def p3_to_srgb(rgb_data):
-    global icc_profile_path
-    input_profile = ImageCms.getOpenProfile(icc_profile_path)
+def p3_to_srgb(rgb_data, icc_data):
+	#input_profile = ImageCms.getOpenProfile(icc_profile_path)
+    input_profile = ImageCms.ImageCmsProfile(BytesIO(icc_data))
     output_profile = ImageCms.createProfile('sRGB')
     transform = ImageCms.buildTransformFromOpenProfiles(
         input_profile, output_profile,
@@ -34,34 +33,37 @@ def p3_to_srgb(rgb_data):
     return np.array(rgb_data)
 
 
-def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, icc_profile_path='mi_dci_p3.icc', quality=100):
+def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, quality=100):  
+    register_heif_opener()
+    output_path = f"{heif_path[:-5]}.jpg"
+    icc_data = Image.open(heif_path).info.get('icc_profile')
     try:
-        rgb_data = np.array(open_heif(heif_path))
+        #rgb_data = np.array(open_heif(heif_path))
+        rgb_data = np.array(Image.open(heif_path))
         if heif_path.lower().endswith(".heic"):
             pass
         if heif_path.lower().endswith(".heif"):
             rgb_data = yuv_limited_to_full(rgb_data)
             if is_p3_to_srgb:
-                rgb_data = p3_to_srgb(rgb_data)
+                rgb_data = p3_to_srgb(rgb_data, icc_data)
         img = Image.fromarray(rgb_data)
-        output_path = f"{heif_path[:-5]}.jpg"
         if os.path.exists(output_path):
-            print(f"File already exists: {output_path}")
-            return
+            raise FileExistsError("Output file already exists.")
         if is_with_icc:
-            icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
+            #icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
             img.save(output_path, quality=quality, icc_profile=icc_data)
         else:
             img.save(output_path, quality=quality)
-    except Exception as e:
-        raise f"Error: {e}"
+        print(f"Conversion completed: {output_path}")
+    except Exception:
+        raise
 
 
 if __name__ == '__main__':
-    heif_path = "your heif file path"
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    heif_path = "IMG_20250204_170123.HEIF"
     is_p3_to_srgb = False
     is_with_icc = True
-    icc_profile_path = 'mi_dci_p3.icc'
     quality = 100
     main(heif_path, is_p3_to_srgb,
-         is_with_icc, icc_profile_path, quality)
+         is_with_icc, quality)
