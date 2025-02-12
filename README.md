@@ -46,3 +46,13 @@ If you like this project, please give it a star! Your support is the greatest mo
 If you have any issues, please submit an issue!
 
 If you have any good modification suggestions, please submit a Pull Request!
+
+<div style="text-align: center;">
+    <img src="./docs/appreciation.png" style="height:150px;">
+</div>
+
+<center>Thank you for your support! ❤</center>
+<br>
+
+> If possible, please leave your personal homepage in the "sponsor notes". Thank you for your support!
+
