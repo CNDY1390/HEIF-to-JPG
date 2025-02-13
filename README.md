@@ -7,7 +7,7 @@
 A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG format.
 
 ## Introduction
-[Watch Introduction Video](https://www.bilibili.com/video/BV)
+[Watch Introduction Video](https://www.bilibili.com/video/BV1SzKHe7EL1)
 
 ## Features
 - **Lightweight**：The code is easy to understand, and does not rely on highly encapsulated libraries.

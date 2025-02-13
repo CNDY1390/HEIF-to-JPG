@@ -3,7 +3,7 @@
 一个将HEIC/HEIF图片转换为JPEG格式，准确且轻量的脚本。
 
 ## 软件介绍
-[介绍视频](https://www.bilibili.com/video/BV)
+[介绍视频](https://www.bilibili.com/video/BV1SzKHe7EL1)
 
 ## 特性
 - **轻巧**：代码简洁易懂，不依赖高度封装的库。
