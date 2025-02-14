@@ -12,6 +12,7 @@ import numpy as np
 from io import BytesIO
 import os
 from pillow_heif import register_heif_opener
+import argparse
 
 
 def yuv_limited_to_full(rgb_data):
@@ -69,11 +70,25 @@ def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, is_with_exif=True, qu
 
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    heif_path = "your_heif_name.HEIF"
-    is_p3_to_srgb = False
-    is_with_icc = True
-    is_with_exif = True
-    quality = 100
-    main(heif_path, is_p3_to_srgb,
-         is_with_icc, is_with_exif, quality)
+    parser = argparse.ArgumentParser(
+        description='Convert HEIF/HEIC images to JPEG')
+    parser.add_argument('heif_path', type=str,
+                        help='Path to input HEIF/HEIC file')
+    parser.add_argument('-o', '--output', type=str,
+                        default=None, help='Path to output JPEG file')
+    parser.add_argument('--p3-to-srgb', action='store_true',
+                        help='Convert P3 to sRGB color space')
+    parser.add_argument('--no-icc', action='store_false',
+                        dest='with_icc', help='Skip ICC profile')
+    parser.add_argument('--no-exif', action='store_false',
+                        dest='with_exif', help='Skip EXIF data')
+    parser.add_argument('-q', '--quality', type=int,
+                        default=100, help='JPEG quality (1-100)')
+
+    args = parser.parse_args()
+    heif_path = args.heif_path
+    output_path = args.output
+    is_p3_to_srgb = args.p3_to_srgb
+    is_with_icc = args.with_icc
+    is_with_exif = args.with_exif
+    quality = args.quality
