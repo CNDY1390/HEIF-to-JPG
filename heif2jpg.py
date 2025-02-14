@@ -1,4 +1,4 @@
-"""CNDY’s HEIC/HEIF to JPEG Conversion Tool
+"""CNDY's HEIC/HEIF to JPEG Conversion Tool
 
 A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG format.
 
