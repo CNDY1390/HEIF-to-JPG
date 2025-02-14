@@ -22,7 +22,7 @@ def yuv_limited_to_full(rgb_data):
 
 
 def p3_to_srgb(rgb_data, icc_data):
-	#input_profile = ImageCms.getOpenProfile(icc_profile_path)
+    # input_profile = ImageCms.getOpenProfile(icc_profile_path)
     input_profile = ImageCms.ImageCmsProfile(BytesIO(icc_data))
     output_profile = ImageCms.createProfile('sRGB')
     transform = ImageCms.buildTransformFromOpenProfiles(
@@ -33,14 +33,14 @@ def p3_to_srgb(rgb_data, icc_data):
     return np.array(rgb_data)
 
 
-def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, is_with_exif=True, quality=100):  
+def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, is_with_exif=True, quality=100):
     register_heif_opener()
     output_path = f"{heif_path[:-5]}.jpg"
     image_info = Image.open(heif_path).info
     icc_data = image_info.get('icc_profile')
     exif_data = image_info.get("exif")
     try:
-        #rgb_data = np.array(open_heif(heif_path))
+        # rgb_data = np.array(open_heif(heif_path))
         rgb_data = np.array(Image.open(heif_path))
         if heif_path.lower().endswith(".heic"):
             pass
@@ -52,9 +52,10 @@ def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, is_with_exif=True, qu
         if os.path.exists(output_path):
             raise FileExistsError("Output file already exists.")
         if is_with_icc:
-            #icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
+            # icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
             if is_with_exif:
-                img.save(output_path, quality=quality, icc_profile=icc_data, exif=exif_data)
+                img.save(output_path, quality=quality,
+                         icc_profile=icc_data, exif=exif_data)
             else:
                 img.save(output_path, quality=quality, icc_profile=icc_data)
         else:
