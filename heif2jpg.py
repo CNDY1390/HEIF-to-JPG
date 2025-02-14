@@ -58,18 +58,12 @@ def convert(heif_path, output_path, is_p3_to_srgb, is_with_icc, is_with_exif, qu
         img = Image.fromarray(rgb_data)
         if output_path.exists():
             raise FileExistsError("Output file already exists.")
+        metadata = dict()
         if is_with_icc:
-            # icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
-            if is_with_exif:
-                img.save(output_path, quality=quality,
-                         icc_profile=icc_data, exif=exif_data)
-            else:
-                img.save(output_path, quality=quality, icc_profile=icc_data)
-        else:
-            if is_with_exif:
-                img.save(output_path, quality=quality, exif=exif_data)
-            else:
-                img.save(output_path, quality=quality)
+            metadata['icc_profile'] = icc_data
+        if is_with_exif:
+            metadata['exif'] = exif_data
+        img.save(output_path, quality=quality, **metadata)
         print(f"Conversion completed: {output_path}")
     except Exception:
         raise
