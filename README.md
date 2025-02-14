@@ -19,9 +19,10 @@ A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG 
 
 ## Usage
 ### Python Script
-1. Place the script and the image to be converted in the same directory.
-2. Edit the `.py` script file and enter the name of the image to be converted.
-3. Run the script.
+
+1. run `pip install -r requirements.txt` to install the required packages.
+2. Run the script with `python heif2jpg.py [input_path]`
+3. Use `-h` option to see full help.
 
 ### Packaged exe
 1. Run the program.
