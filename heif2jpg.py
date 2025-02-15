@@ -1,4 +1,4 @@
-"""CNDY’s HEIC/HEIF to JPEG Conversion Tool
+"""CNDY's HEIC/HEIF to JPEG Conversion Tool
 
 A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG format.
 
@@ -10,8 +10,9 @@ Git: https://github.com/CNDY1390/HEIF-to-JPG
 from PIL import Image, ImageCms
 import numpy as np
 from io import BytesIO
-import os
+from pathlib import Path
 from pillow_heif import register_heif_opener
+import argparse
 
 
 def yuv_limited_to_full(rgb_data):
@@ -22,7 +23,7 @@ def yuv_limited_to_full(rgb_data):
 
 
 def p3_to_srgb(rgb_data, icc_data):
-	#input_profile = ImageCms.getOpenProfile(icc_profile_path)
+    # input_profile = ImageCms.getOpenProfile(icc_profile_path)
     input_profile = ImageCms.ImageCmsProfile(BytesIO(icc_data))
     output_profile = ImageCms.createProfile('sRGB')
     transform = ImageCms.buildTransformFromOpenProfiles(
@@ -33,46 +34,63 @@ def p3_to_srgb(rgb_data, icc_data):
     return np.array(rgb_data)
 
 
-def main(heif_path, is_p3_to_srgb=False, is_with_icc=True, is_with_exif=True, quality=100):  
+def convert(heif_path, output_path, is_p3_to_srgb, is_with_icc, is_with_exif, quality):
+    if quality > 100 or quality < 1:
+        raise ValueError("Quality should be between 1 and 100.")
     register_heif_opener()
-    output_path = f"{heif_path[:-5]}.jpg"
+    heif_path = Path(heif_path)
+    if output_path is None:
+        output_path = heif_path.with_suffix('.jpg')
+    else:
+        output_path = Path(output_path)
     image_info = Image.open(heif_path).info
     icc_data = image_info.get('icc_profile')
     exif_data = image_info.get("exif")
     try:
-        #rgb_data = np.array(open_heif(heif_path))
+        # rgb_data = np.array(open_heif(heif_path))
         rgb_data = np.array(Image.open(heif_path))
-        if heif_path.lower().endswith(".heic"):
+        if heif_path.suffix.lower() == ".heic":
             pass
-        if heif_path.lower().endswith(".heif"):
+        if heif_path.suffix.lower() == ".heif":
             rgb_data = yuv_limited_to_full(rgb_data)
             if is_p3_to_srgb:
                 rgb_data = p3_to_srgb(rgb_data, icc_data)
         img = Image.fromarray(rgb_data)
-        if os.path.exists(output_path):
+        if output_path.exists():
             raise FileExistsError("Output file already exists.")
+        metadata = dict()
         if is_with_icc:
-            #icc_data = ImageCms.getOpenProfile(icc_profile_path).tobytes()
-            if is_with_exif:
-                img.save(output_path, quality=quality, icc_profile=icc_data, exif=exif_data)
-            else:
-                img.save(output_path, quality=quality, icc_profile=icc_data)
-        else:
-            if is_with_exif:
-                img.save(output_path, quality=quality, exif=exif_data)
-            else:
-                img.save(output_path, quality=quality)
+            metadata['icc_profile'] = icc_data
+        if is_with_exif:
+            metadata['exif'] = exif_data
+        img.save(output_path, quality=quality, **metadata)
         print(f"Conversion completed: {output_path}")
     except Exception:
         raise
 
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    heif_path = "your_heif_name.HEIF"
-    is_p3_to_srgb = False
-    is_with_icc = True
-    is_with_exif = True
-    quality = 100
-    main(heif_path, is_p3_to_srgb,
-         is_with_icc, is_with_exif, quality)
+    parser = argparse.ArgumentParser(
+        description='Convert HEIF/HEIC images to JPEG')
+    parser.add_argument('heif_path', type=str,
+                        help='Path to input HEIF/HEIC file')
+    parser.add_argument('-o', '--output', type=str,
+                        default=None, help='Path to output JPEG file')
+    parser.add_argument('--p3-to-srgb', action='store_true',
+                        help='Convert P3 to sRGB color space')
+    parser.add_argument('--no-icc', action='store_false',
+                        dest='with_icc', help='Skip ICC profile')
+    parser.add_argument('--no-exif', action='store_false',
+                        dest='with_exif', help='Skip EXIF data')
+    parser.add_argument('-q', '--quality', type=int,
+                        default=100, help='JPEG quality (1-100)')
+
+    args = parser.parse_args()
+    heif_path = args.heif_path
+    output_path = args.output
+    is_p3_to_srgb = args.p3_to_srgb
+    is_with_icc = args.with_icc
+    is_with_exif = args.with_exif
+    quality = args.quality
+    convert(heif_path, output_path, is_p3_to_srgb,
+            is_with_icc, is_with_exif, quality)
