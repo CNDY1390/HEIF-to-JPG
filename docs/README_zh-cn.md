@@ -15,9 +15,9 @@
 
 ## 使用方法
 ### Python脚本
-1. 将脚本和要转换的图片放在同一目录。
-2. 编辑`.py`脚本文件，填写要转换的图片的名称。
-3. 运行脚本。
+1. 运行 `pip install -r requirements.txt` 安装依赖库
+2. 运行 `python heif2jpg.py [input_path]`
+3. 使用 `-h` 查看完整的帮助信息。
 
 ### 封装版 exe
 1. 运行程序。
