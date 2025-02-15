@@ -25,10 +25,14 @@ A precise and lightweight solution designed to convert HEIC/HEIF images to JPEG 
 3. Use `-h` option to see full help.
 
 ### Packaged exe
-1. Run the program.
-2. Follow the instruction.
 
-> [!IMPORTANT]
+1. Use `heif2jpg.exe [-h] [-o OUTPUT] [--p3-to-srgb] [--no-icc] [--no-exif] [-q QUALITY] heif_path` to convert files.
+2. Use `-h` option to see full help.
+
+> [!NOTE]\
+> Do not run the program directly. Instead, execute the script via the command line.
+
+> [!WARNING]\
 > The packaged exe version may trigger false virus alerts. Please allow it to run. If you are concerned, you can run it offline or download the source code for inspection.
 
 ## Extension
